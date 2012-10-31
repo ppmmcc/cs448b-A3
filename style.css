@@ -1,0 +1,41 @@
+body {
+	margin: 0;
+	background-color: #fff;
+}
+
+h1 {
+	padding: 20px 0 0 15px;
+	margin: 0 0 10px 0;
+	font-family: 'Open Sans Condensed', sans-serif;
+	font-size: 48px;
+	color: #777;
+}
+
+#map {
+	background-color: #eee;
+}
+
+.background {
+  fill: none;
+  pointer-events: all;
+}
+
+#states .active {
+  fill: #fff;
+}
+
+#states path {
+  fill: #fff;
+  stroke: #eee;
+  stroke-width: 3px;
+}
+
+#states path:hover {
+  stroke: #eee;
+}
+
+#panel {
+	width: 100%;
+	min-height: 200px;
+	background-color: #fff;
+}
