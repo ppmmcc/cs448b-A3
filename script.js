@@ -30,7 +30,6 @@ app.Races = {
 	All: 7
 };
 
-
 // Hold values for selected applicant type,
 // selected race, and selected state
 app.selectedType = app.Types.Applicant;
@@ -93,6 +92,8 @@ states.selectAll("path")
 
 redraw(aamc_data);
 
+console.log(aamc_by_state);
+
 /**
  * Clear the map
  * Stop highlighting the last child in circles
@@ -124,9 +125,13 @@ function redraw(json) {
 		app.stateCentroids[state].x = centroid.x;
 		app.stateCentroids[state].y = centroid.y;
 
+		/*
 		for (var race in types) {
 			total += parseInt(types[race]);
 		}
+		*/
+		total = aamc_by_state[state][type]["Total"];
+		console.log(total);
 
 		var size = app.MAX_CIRCLE_SIZE * (total / app.MAX_APPLICANTS);
 		size = size < app.MIN_CIRCLE_SIZE ? app.MIN_CIRCLE_SIZE : size;
@@ -151,6 +156,7 @@ function selectState(node) {
 	var cy = node.attr("cy");
 	var r = node.attr("r");
 	var state = node.attr("id");
+	var type = (app.selectedType == app.Types.Applicant) ? "Applicants" : "Matriculants";
 
 	node.remove();
 
@@ -185,7 +191,7 @@ function selectState(node) {
 			.attr("class", "num")
 			.transition()
 			.duration(1000)
-			.text(1000);
+			.text(aamc_by_state[state][type]["Total"]);
 }
 
 /**
