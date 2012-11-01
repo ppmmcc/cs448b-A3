@@ -27,15 +27,27 @@ h1 {
 #states path {
   fill: #fff;
   stroke: #eee;
-  stroke-width: 3px;
+  stroke-width: 15px;
+}
+
+circle.neutral {
+	fill: #efdcd8;
+}
+
+circle.highlighted {
+	fill: #F15A24;
+	z-index: 99999;
+}
+
+text.num {
+	font-family: 'Open Sans Condensed', sans-serif;
+	font-size: 24px;
+	font-weight: bold;
+	fill: #fff;
 }
 
 #states path:hover {
   stroke: #eee;
-}
-
-.neutral {
-	fill: #333;
 }
 
 #panel {
