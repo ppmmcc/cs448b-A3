@@ -35,6 +35,26 @@ def csv_to_dict(filename):
 
 	return data
 
+def get_aamc_race_data(filename):
+	file = open(filename, "rb")
+	reader = csv.reader(file, delimiter=";")
+
+	rownum = 0
+	data = recursively_default_dict()
+
+	for row in reader:
+		if rownum is not 0:
+			state = row[0]
+			app_type = row[1]
+			race = row[2]
+			count = row[3]
+
+			data[state][app_type][race] = count
+		
+		rownum += 1
+	pprint(data)
+	return data
+
 def json_to_dict(filename):
 	json_data = open(filename)
 	data = json.load(json_data)
@@ -59,11 +79,14 @@ def output_to_json(data):
 	
 
 
+'''
 csv_data = csv_to_dict(aamc_filename)
 coords_data = json_to_dict(coords_filename)
 merged_data = merge_data(csv_data, coords_data)
 output_to_json(merged_data)
+'''
 
+aamc_race_data = get_aamc_race_data(aamc_filename)
 
 
 

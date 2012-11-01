@@ -161,4 +161,16 @@ text.num {
    background-color: #ffffff
 }
 
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Condensed Bold'), local('OpenSans-CondensedBold'), url("OpenSansCondensedBold.woff") format('woff');
+}
 
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Cond Light'), local('OpenSans-CondensedLight'), url("OpenSansCondensedLight.woff") format('woff');
+}
