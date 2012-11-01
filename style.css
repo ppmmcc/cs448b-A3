@@ -34,8 +34,27 @@ h1 {
   stroke: #eee;
 }
 
+.neutral {
+	fill: #333;
+}
+
 #panel {
 	width: 100%;
 	min-height: 200px;
 	background-color: #fff;
+}
+
+.type-tab {
+	height: 100px;
+	width: 100px;
+	background-color: #fff;
+	border-radius: 0 0 10px 10px;
+	margin-left: 20px;
+	display: inline-block;
+	text-align: center;
+	padding: 10px 0 10px 0;
+}
+
+.selected-tab {
+	background-color: #eee;
 }
