@@ -13,7 +13,7 @@ app.MIN_CIRCLE_SIZE = 10;
 app.TEXT_Y_OFFSET = 5; // Text offset from a circle's centroid
 
 // Color Array for Pie Chart
-app.COLORS = ["#1B9BDB", "#6CA63E", "#9E9E9E", "#C44F9A", "#7266B9", "#E7A635", "#159FA8", "#000"]
+app.COLORS = ["#1B9BDB", "#6CA63E", "#9E9E9E", "#C44F9A", "#7266B9", "#E7A635", "#159FA8"]
 
 // Values for applicant type
 app.Types = {
@@ -133,9 +133,16 @@ function getRaceString(i) {
  * Stop highlighting the last child in circles
  * Remove the last child in text
  */
-function clear() {
+function clearCircles() {
 	$("#circles circle:last").remove();
 	$("#text text:last").remove();
+}
+
+/**
+ * Clear the map of ALL circles
+ */
+function clearAllCircles() {
+	$("#circles").children().remove();
 }
 
 /**
@@ -195,6 +202,8 @@ function selectState(node) {
 	var type = (app.selectedType == app.Types.Applicant) ? "Applicants" : "Matriculants";
 
 	node.remove();
+	unselectRaces();
+	clearPieCharts();
 
 	// Render the backup circle
 	circles.append("circle")
@@ -250,11 +259,11 @@ function click(d) {
 		app.selectedState = state;
 		selectState(node);
 	} else if (app.selectedState == state) {
-		clear();
+		clearCircles();
 		app.selectedState = null;
 		
 	} else {
-		clear();
+		clearCircles();
 		app.selectedState = state;
 		selectState(node);
 	}
@@ -302,7 +311,7 @@ function renderPieChart() {
 
   var pie = d3.layout.pie()
     .sort(null)
-    .value(function(d) { return 1000; });
+    .value(function(d) { return 10; });
 
   //clear();
 
@@ -313,10 +322,9 @@ function renderPieChart() {
 		for (var i = 0; i < data.length - 1; i++) {
 			values.push(parseInt(data[i]["Value"]));
 		}
-		console.log(data);
 		console.log(values);
 	  var g = pies.selectAll(".arc")
-	      				.data(pie([1, 200]))
+	      				.data(pie(values))
 	    					.enter().append("g")
 	      				.attr("class", "arc")
 	      				.attr("transform", "translate(" + centroids.x + "," + centroids.y + ")");
@@ -329,7 +337,6 @@ function renderPieChart() {
 
 
 	var percentage = ( parseFloat(aamc_by_state[state][type][raceStr]) / parseFloat(aamc_by_state[state][type]["Total"])) * 100;
-	console.log(percentage);
 	renderText(centroids.x, centroids.y + app.TEXT_Y_OFFSET, Math.ceil(percentage) + "%");
 }
 
@@ -345,7 +352,7 @@ $("#icon_hispanic").bind("click", function() {
 	clearPieCharts();
 	if (app.selectedRace == app.Races.Hispanic) {
 		app.selectedRace = null;
-		clear();
+		clearCircles();
 		var node = d3.select("#" + app.selectedState);
 		selectState(node);
 	} else {
@@ -366,7 +373,7 @@ $("#icon_asian").bind("click", function() {
 
 	if (app.selectedRace == app.Races.Asian) {
 		app.selectedRace = null;
-		clear();
+		clearCircles();
 		var node = d3.select("#" + app.selectedState);
 		selectState(node);
 	} else {
@@ -380,79 +387,96 @@ $("#icon_asian").bind("click", function() {
 
 $("#icon_native").bind("click", function() {
 	if (app.selectedState == null) return;
+
 	unselectRaces();
+	clearPieCharts();
 	if (app.selectedRace == app.Races.NativeAmerican) {
 		app.selectedRace = null;
+		clearCircles();
+		var node = d3.select("#" + app.selectedState);
+		selectState(node);
 	} else {
 		app.selectedRace = app.Races.NativeAmerican;
 		var elem = d3.select(this);
 		var stroke = elem.attr("stroke");
 		elem.attr("fill", stroke);
+		renderPieChart();
 	}
 });
 
 $("#icon_black").bind("click", function() {
 	if (app.selectedState == null) return;
+
 	unselectRaces();
+	clearPieCharts();
 	if (app.selectedRace == app.Races.Black) {
 		app.selectedRace = null;
+		clearCircles();
+		var node = d3.select("#" + app.selectedState);
+		selectState(node);
 	} else {
 		app.selectedRace = app.Races.Black;
 		var elem = d3.select(this);
 		var stroke = elem.attr("stroke");
 		elem.attr("fill", stroke);
+		renderPieChart();
 	}
 });
 
 $("#icon_white").bind("click", function() {
 	if (app.selectedState == null) return;
+
 	unselectRaces();
+	clearPieCharts();
 	if (app.selectedRace == app.Races.White) {
 		app.selectedRace = null;
+		clearCircles();
+		var node = d3.select("#" + app.selectedState);
+		selectState(node);
 	} else {
 		app.selectedRace = app.Races.White;
 		var elem = d3.select(this);
 		var stroke = elem.attr("stroke");
 		elem.attr("fill", stroke);
+		renderPieChart();
 	}
 });
 
 $("#icon_pacific").bind("click", function() {
 	if (app.selectedState == null) return;
+
 	unselectRaces();
+	clearPieCharts();
 	if (app.selectedRace == app.Races.NativeHawaiian) {
 		app.selectedRace = null;
+		clearCircles();
+		var node = d3.select("#" + app.selectedState);
+		selectState(node);
 	} else {
 		app.selectedRace = app.Races.NativeHawaiian;
 		var elem = d3.select(this);
 		var stroke = elem.attr("stroke");
 		elem.attr("fill", stroke);
+		renderPieChart();
 	}
 });
 
 $("#icon_foreign").bind("click", function() {
 	if (app.selectedState == null) return;
+
 	unselectRaces();
+	clearPieCharts();
 	if (app.selectedRace == app.Races.Foreign) {
 		app.selectedRace = null;
+		clearCircles();
+		var node = d3.select("#" + app.selectedState);
+		selectState(node);
 	} else {
 		app.selectedRace = app.Races.Foreign;
 		var elem = d3.select(this);
 		var stroke = elem.attr("stroke");
 		elem.attr("fill", stroke);
-	}
-});
-
-$("#icon_all").bind("click", function() {
-	if (app.selectedState == null) return;
-	unselectRaces();
-	if (app.selectedRace == app.Races.All) {
-		app.selectedRace = null;
-	} else {
-		app.selectedRace = app.Races.All;
-		var elem = d3.select(this);
-		var stroke = elem.attr("stroke");
-		elem.attr("fill", stroke);
+		renderPieChart();
 	}
 });
 
@@ -460,24 +484,46 @@ $("#icon_all").bind("click", function() {
  * Click selectors on the Applicants and
  * Matriculants.
  */
- /*
-d3.select("#icon_applicants")
-	.on("click", function() {
-		console.log("Clicked on applicants");
-	});
 
-$("#icon_applicants").bind("click", function() {
-	if (app.selectedType != app.Types.Applicants) {
-		d3.select(this)
-			.attr("data", "svg/icon_applicants_off.svg");
+var icon_applicants_elem = $("#icon_applicants");
+var icon_applicants_img = icon_applicants_elem.find("img");
+var icon_matriculants_elem = $("#icon_matriculants");
+var icon_matriculants_img = icon_matriculants_elem.find("img");
+
+icon_applicants_elem.bind("click", function() {
+	if (app.selectedType != app.Types.Applicant) {
+		// Change visual aspect of tab
+		app.selectedType = app.Types.Applicant;
+		icon_applicants_elem.addClass("selected-tab");
+		icon_matriculants_elem.removeClass("selected-tab");
+		icon_applicants_img.attr("src", "img/icon_applicants_on.png");
+		icon_matriculants_img.attr("src", "img/icon_matriculants_off.png");
+
+		// Rerender the map using Applicant data
+		clearAllCircles();
+		clearPieCharts();
+		unselectRaces();
+		app.selectedRace = null;
+		app.selectedState = null;
+		redraw(aamc_data);
 	}
 });
 
-$("#icon_matriculants").bind("click", function() {
-	console.log("Clicked on Matriculants");
-	if (app.selectedType != app.Types.Matriculants) {
-		d3.select(this)
-			.attr("data", "svg/icon_matriculants_on.svg");
+icon_matriculants_elem.bind("click", function() {
+	if (app.selectedType != app.Types.Matriculant) {
+		// Change visual aspect of tab
+		app.selectedType = app.Types.Matriculant;
+		icon_matriculants_elem.addClass("selected-tab");
+		icon_applicants_elem.removeClass("selected-tab");
+		icon_applicants_img.attr("src", "img/icon_applicants_off.png");
+		icon_matriculants_img.attr("src", "img/icon_matriculants_on.png");
+
+		// Rerender the map using Matriculant data
+		clearAllCircles();
+		clearPieCharts();
+		unselectRaces();
+		app.selectedRace = null;
+		app.selectedState = null;
+		redraw(aamc_data);
 	}
 });
-*/

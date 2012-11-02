@@ -36,6 +36,10 @@ p {
   stroke-width: 15px;
 }
 
+circle {
+  cursor: pointer;
+}
+
 circle.neutral {
 	fill: #efdcd8;
 }
@@ -79,6 +83,7 @@ text.num {
 	display: inline-block;
 	text-align: center;
 	padding: 10px 0 10px 0;
+  cursor: pointer;
 }
 
 .selected-tab {
