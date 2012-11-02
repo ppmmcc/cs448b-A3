@@ -122,6 +122,16 @@ def output_to_json(data, output_name):
 	f.write(output)
 	f.close()
 
+
+def write_to_csv(data):
+	for state in data:
+		for appType in data[state]:
+			with open('csv/' + state + appType + '.csv', 'wb') as csvfile:
+				writer = csv.writer(csvfile, delimiter=',')
+				writer.writerow(['Race','Value'])
+				for raceType in data[state][appType]:
+					writer.writerow([raceType, str(data[state][appType][raceType])]);
+
 	
 
 
@@ -134,7 +144,9 @@ output_to_json(merged_data)
 
 aamc_race_data = get_aamc_race_data(aamc_filename)
 aamc_race_data = clean_aamc_race_data(aamc_race_data)
-output_to_json(aamc_race_data, cleaned_aamc_filename)
+#output_to_json(aamc_race_data, cleaned_aamc_filename)
+write_to_csv(aamc_race_data)
+
 
 
 

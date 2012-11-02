@@ -12,6 +12,9 @@ app.MAX_APPLICANTS = 6000;
 app.MIN_CIRCLE_SIZE = 10;
 app.TEXT_Y_OFFSET = 5; // Text offset from a circle's centroid
 
+// Color Array for Pie Chart
+app.COLORS = ["#1B9BDB", "#6CA63E", "#9E9E9E", "#C44F9A", "#7266B9", "#E7A635", "#159FA8", "#000"]
+
 // Values for applicant type
 app.Types = {
 	Applicant: 0,
@@ -71,13 +74,13 @@ var states = svg.append("g")
 var circles = svg.append("g")
 								 .attr("id", "circles");
 
-// Text
-var text = svg.append("g")
-						 	.attr("id", "text");
-
 // Pie Charts
 var pies = svg.append("g")
 							.attr("id", "pies");
+
+// Text
+var text = svg.append("g")
+						 	.attr("id", "text");
 
 states.append("rect")
 			.attr("class", "background")
@@ -92,7 +95,38 @@ states.selectAll("path")
 
 redraw(aamc_data);
 
-console.log(aamc_by_state);
+/**
+ * Returns the string for a race given an integer.
+ */
+function getRaceString(i) {
+	switch(i) {
+		case app.Races.Hispanic:
+			return "Hispanic";
+
+		case app.Races.Asian:
+			return "Asian";
+
+		case app.Races.NativeAmerican:
+			return "NativeAmerican";
+
+		case app.Races.Black:
+			return "Black";
+
+		case app.Races.White:
+			return "White";
+
+		case app.Races.NativeHawaiian:
+			return "NativeHawaiian";
+
+		case app.Races.Foreign:
+			return "Foreign";
+
+		case app.Races.All:
+			return "All";
+
+	}
+	return;
+}
 
 /**
  * Clear the map
@@ -101,6 +135,14 @@ console.log(aamc_by_state);
  */
 function clear() {
 	$("#circles circle:last").remove();
+	$("#text text:last").remove();
+}
+
+/**
+ * Clear the pie charts and their text
+ */
+function clearPieCharts() {
+	$("#pies").children().remove();
 	$("#text text:last").remove();
 }
 
@@ -125,13 +167,7 @@ function redraw(json) {
 		app.stateCentroids[state].x = centroid.x;
 		app.stateCentroids[state].y = centroid.y;
 
-		/*
-		for (var race in types) {
-			total += parseInt(types[race]);
-		}
-		*/
 		total = aamc_by_state[state][type]["Total"];
-		console.log(total);
 
 		var size = app.MAX_CIRCLE_SIZE * (total / app.MAX_APPLICANTS);
 		size = size < app.MIN_CIRCLE_SIZE ? app.MIN_CIRCLE_SIZE : size;
@@ -183,15 +219,21 @@ function selectState(node) {
 				 .duration(1000)
 				 .attr("r", app.SELECTED_CIRCLE_SIZE);
 
-	// Render the text
+	renderText(cx, parseInt(cy) + app.TEXT_Y_OFFSET, aamc_by_state[state][type]["Total"]);
+}
+
+/**
+ * Renders SVG text
+ */
+function renderText(x, y, str) {
 	text.append("text")
-			.attr("x", cx)
-			.attr("y", parseInt(cy) + app.TEXT_Y_OFFSET)
+			.attr("x", x)
+			.attr("y", y)
 			.attr("text-anchor", "middle")
 			.attr("class", "num")
 			.transition()
 			.duration(1000)
-			.text(aamc_by_state[state][type]["Total"]);
+			.text(str);
 }
 
 /**
@@ -238,49 +280,57 @@ function renderPieChart() {
 	var pieWidth = app.SELECTED_CIRCLE_SIZE;
 	var pieHeight = app.SELECTED_CIRCLE_SIZE;
 	var pieRadius = pieHeight;
+	/*
 	var color = d3.scale.ordinal()
-    .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]); // Consider moving this to the top as a var inside the namespace
+    .range(app.COLORS);
+   */
+	var color = d3.scale.ordinal()
+	.domain(d3.range(8))
+	.range(["#C44F9A","#E7A635","#6CA63E","#9E9E9E","#7266B9","#159FA8","#1B9BDB","#000"]);
 
   var state = app.selectedState;
+	var type = (app.selectedType == app.Types.Applicant) ? "Applicants" : "Matriculants";
+	var race = app.selectedRace;
+	var raceStr = getRaceString(race);
+	var filename = "csv/" + state + type + ".csv"
+
   var centroids = app.stateCentroids[app.selectedState];
-  console.log(centroids);
 
   var arc = d3.svg.arc()
-    .outerRadius(pieRadius - 10)
+    .outerRadius(pieRadius)
     .innerRadius(0);
 
   var pie = d3.layout.pie()
     .sort(null)
     .value(function(d) { return 1000; });
 
-  clear();
+  //clear();
 
-	d3.csv("testData.csv", function(data) {
 
-	  data.forEach(function(d) {
-	    d.population = +d.population;
-	  });
+	d3.csv(filename, function(data) {
 
+		var values = [];
+		for (var i = 0; i < data.length - 1; i++) {
+			values.push(parseInt(data[i]["Value"]));
+		}
+		console.log(data);
+		console.log(values);
 	  var g = pies.selectAll(".arc")
-	      				.data(pie(data))
+	      				.data(pie([1, 200]))
 	    					.enter().append("g")
 	      				.attr("class", "arc")
 	      				.attr("transform", "translate(" + centroids.x + "," + centroids.y + ")");
 
 	  g.append("path")
 	      .attr("d", arc)
-	      .style("fill", function(d) { return color(d.data.age); });
-
-	  /*
-	  g.append("text")
-	      .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-	      .attr("dy", ".35em")
-	      .style("text-anchor", "middle")
-	      .text(function(d) { return d.data.age; });
-	  */
+	      .style("fill", function(d, i) { return color(i); });
 
 	});
 
+
+	var percentage = ( parseFloat(aamc_by_state[state][type][raceStr]) / parseFloat(aamc_by_state[state][type]["Total"])) * 100;
+	console.log(percentage);
+	renderText(centroids.x, centroids.y + app.TEXT_Y_OFFSET, Math.ceil(percentage) + "%");
 }
 
 /**
@@ -290,10 +340,14 @@ function renderPieChart() {
  */
 $("#icon_hispanic").bind("click", function() {
 	if (app.selectedState == null) return;
+
 	unselectRaces();
+	clearPieCharts();
 	if (app.selectedRace == app.Races.Hispanic) {
 		app.selectedRace = null;
-		// unrenderPieChart
+		clear();
+		var node = d3.select("#" + app.selectedState);
+		selectState(node);
 	} else {
 		app.selectedRace = app.Races.Hispanic;
 		var elem = d3.select(this);
@@ -301,18 +355,26 @@ $("#icon_hispanic").bind("click", function() {
 		elem.attr("fill", stroke);
 		renderPieChart();
 	}
+
 });
 
 $("#icon_asian").bind("click", function() {
 	if (app.selectedState == null) return;
+
 	unselectRaces();
+	clearPieCharts();
+
 	if (app.selectedRace == app.Races.Asian) {
 		app.selectedRace = null;
+		clear();
+		var node = d3.select("#" + app.selectedState);
+		selectState(node);
 	} else {
 		app.selectedRace = app.Races.Asian;
 		var elem = d3.select(this);
 		var stroke = elem.attr("stroke");
 		elem.attr("fill", stroke);
+		renderPieChart();
 	}
 });
 
